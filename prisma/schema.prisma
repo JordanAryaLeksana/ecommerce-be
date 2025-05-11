@@ -13,6 +13,11 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Category {
+  tools
+  books
+  projects
+}
 model User {
   id        String   @id @default(cuid())
   email     String   @unique
@@ -24,47 +29,42 @@ model User {
   updatedAt DateTime @updatedAt
 }
 
-model Barang {
+model Item {
   id        String   @id @default(cuid())
   name      String @db.VarChar(100)
   image     String
   description String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  tool     tools[]
-  book    books[]
-  final_project final_projects[]
+  price    Float
+  stock    Int
+  type     Category
+  tool     Tools[]
+  book    Books[]
+  final_project Projects[]
 }
 
-model tools {
+model Tools {
   id        String   @id @default(cuid())
-  name      String
-  image     String
-  description String
   barang_id String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  barang Barang @relation(fields: [barang_id], references: [id])
+  barang Item @relation(fields: [barang_id], references: [id])
 }
-model books {
+model Books {
   id        String   @id @default(cuid())
-  name      String
-  image     String
-  description String
   writer    String 
   year      Int
   barang_id String
-  barang Barang @relation(fields: [barang_id], references: [id])
+  barang Item @relation(fields: [barang_id], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
-model final_projects {
+model Projects {
   id  String @id @default(cuid())
-  name String
-  image String
   barang_id String
-  barang Barang @relation(fields: [barang_id], references: [id])
+  barang Item @relation(fields: [barang_id], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

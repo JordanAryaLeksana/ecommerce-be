@@ -33,23 +33,31 @@ export class UserService {
         if(totalUserWithSameUsername != 0){
             throw new HttpException("Username already exists", 400)
         }
+        const totalUserWithSameEmail = await this.prismaService.user.count({
+            where: {
+                email: registerRequest.email
+            }
+        });
+        if (totalUserWithSameEmail !== 0) {
+            throw new HttpException("Email already exists", 400);
+        }
        
         const hashedPassword: string = await bcrypt.hash(registerRequest.password, 10)
         registerRequest.password = hashedPassword
+        try{  
         const user = await this.prismaService.user.create({
             data: registerRequest
         })
 
-
-        try{  
             return {
               name: user.name,
               email: user.email,
             };
         } catch(e) {
             this.logger.error(`Error creating user: ${e}`)
-            throw new HttpException("Error creating user", 500)
+            throw new HttpException('Failed to register user', 500);
         }
+
     }
 
     async getTokens(id:string, email: string , name: string): Promise<Tokens>{
