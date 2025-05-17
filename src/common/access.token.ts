@@ -15,10 +15,7 @@ export class AccessToken extends PassportStrategy(Strategy, 'jwt'){
             } as StrategyOptionsWithRequest
         )
     }
-    validate(payload: UserResponse){
-        console.log("masuk validate")
-        // const refreshToken = req.get('Authorization')?.replace('Bearer', '').trim()
-    
+    validate(payload: UserResponse){    
         return payload;
     }
 }

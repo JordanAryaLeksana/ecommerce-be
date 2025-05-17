@@ -15,7 +15,7 @@ export interface Items {
 }
 
 export interface ItemsRequest {
-    type: Category;
+    type: string;
     writer?: string;
     year?: number;
     name: string;

@@ -23,6 +23,9 @@ export class UserService {
 
     async register(request: RegisterUserRequest): Promise<UserResponse>{
         this.logger.info(`Register New User: ${JSON.stringify(request)}`);
+        // this.logger.error(`Register New User: ${JSON.stringify(request)}`);
+     
+
         const registerRequest: RegisterUserRequest = this.validationService.validate<RegisterUserRequest>(UserValidation.REGISTER, request)
         console.log(registerRequest)
         const totalUserWithSameUsername = await this.prismaService.user.count({
@@ -105,6 +108,7 @@ export class UserService {
     }
     async login(request: LoginRequest): Promise<WebResponse<UserResponse>>{
         this.logger.info(`Login User: ${JSON.stringify(request)}`)
+        this.logger.error(`Login User: ${JSON.stringify(request)}`)
         const LoginRequest: LoginRequest = this.validationService.validate<LoginRequest>(UserValidation.LOGIN, request)
         const user = await this.prismaService.user.findUnique({
             where:{

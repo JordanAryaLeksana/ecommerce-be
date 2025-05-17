@@ -9,6 +9,5 @@ import { z, ZodType } from "zod";
     static readonly LOGIN: ZodType = z.object({
         password: z.string().min(6).max(100),
         email: z.string().email()
-    })
-    
+    })  
  }
