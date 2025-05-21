@@ -8,7 +8,7 @@ import { User } from '@prisma/client';
 // import { request } from 'http';
 import { AccessTokenAuth } from '../common/Accesstoken.auth.guard';
 import { Public } from 'src/common/public.decorator';
-
+import { Tokens } from '../model/user.model';
 @Controller('/api/users')
 export class UserController  {
   constructor(private userService: UserService,
@@ -23,6 +23,22 @@ export class UserController  {
     // console.log("controller",result)
     return {
       data: result
+    }
+  }
+
+  @Post('/refresh-token')
+  @Public()
+  @HttpCode(200)
+  async refreshToken(@Body() token: Tokens): Promise<WebResponse<Tokens>> {
+    if (!token.id || !token.refreshToken) {
+      return {
+        error: 'Missing user id or refresh token'
+      };
+    }
+    console.log("masuk",token)
+    const result = await this.userService.refreshTokens(token.id, token.refreshToken);
+    return {
+      data: result,
     }
   }
   @Post('/login')

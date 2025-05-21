@@ -13,7 +13,7 @@ export class BarangController {
     @Post('/addItems')
     async addItems(@Body()request: ItemsRequest ): Promise<WebResponse<ItemsResponse>> {
         const result = await this.barangService.addItems(request);
-        console.log("barang",result)
+        // console.log("barang",result)
         return {
             data: result,
         };

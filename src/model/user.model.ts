@@ -12,8 +12,8 @@ export class UserResponse {
 }
 
 export class Tokens{
-    accessToken: string;
-    refreshToken: string;
+    accessToken: string | null;
+    refreshToken: string | null;
     id?: string;
 }
 export class LoginRequest{

@@ -106,13 +106,14 @@ export class BarangService {
       }
       const { book, final_project, tool, ...rest } = result
       return {
-        data: [{
+        item: [{
           ...rest,
           books: book,
           finalproject: final_project,
           tools: tool,
-        }],
+        }]
       };
+      
 
     } catch (err: unknown) {
       this.logger.error('Failed to add item', {
@@ -155,7 +156,7 @@ export class BarangService {
     console.log(result)
     const { book, final_project, tool, ...rest } = result
     return {
-      data: [{
+      item: [{
         ...rest,
         books: book,
         finalproject: final_project,
@@ -198,7 +199,7 @@ export class BarangService {
 
     const { book, final_project, tool, ...rest } = result
     return {
-      data: [{
+      item: [{
         ...rest,
         books: book,
         finalproject: final_project,
@@ -217,13 +218,17 @@ export class BarangService {
     });
 
     return {
-      data: result.map((item) => ({
-        ...item,
-        books: item.book,
-        finalproject: item.final_project,
-        tools: item.tool,
-      })),
+      item: result.map((item) => {
+        const { book, final_project, tool, ...rest } = item;
+        return {
+          ...rest,
+          books: book,
+          finalproject: final_project,
+          tools: tool,
+        };
+      }),
     };
+
   }
 
   async updateItems(id: string, request: ItemsRequest): Promise<ItemsResponse> {
@@ -294,7 +299,7 @@ export class BarangService {
     }
     const { book, final_project, tool, ...rest } = updatedItem
     return {
-      data: [{
+      item: [{
         ...rest,
         books: book,
         finalproject: final_project,
@@ -318,14 +323,18 @@ export class BarangService {
     if (!result) {
       throw new NotFoundException(`Barang with category ${category} not found`);
     }
-    
+
     return {
-      data: result.map((item) => ({
-        ...item,
-        books: item.book,
-        finalproject: item.final_project,
-        tools: item.tool,
-      })),
+      item: result.map((item) => {
+        const { book, final_project, tool, ...rest } = item;
+        return {
+          ...rest,
+          books: book,
+          finalproject: final_project,
+          tools: tool,
+        };
+      }),
     };
+
   }
 }
