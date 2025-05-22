@@ -1,7 +1,7 @@
 import { z, ZodType } from "zod";
 
 const baseSchema = z.object({
-  type: z.enum(['books', 'final_projects', 'tools']),
+  type: z.enum(['books', 'projects', 'tools']),
   name: z.string().min(1).max(100),
   price: z.number().min(0),
   stock: z.number().min(0),
@@ -22,7 +22,7 @@ export class ItemsValidation {
   });
 
   static readonly UPDATE: ZodType = z.object({
-    type: z.enum(['books', 'final_projects', 'tools']).optional(),
+    type: z.enum(['books', 'projects', 'tools']).optional(),
     name: z.string().min(1).max(100).optional(),
     price: z.number().min(0).optional(),
     stock: z.number().min(0).optional(),
