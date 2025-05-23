@@ -29,6 +29,15 @@ export class BarangController {
     }    
 
     @UseGuards(AccessTokenAuth)
+    @Get('/getItemsbyTypeandName/:type/:name')
+    async getItemsByTypeAndId(@Param('type') type: string, @Param('name') name: string): Promise<WebResponse<ItemsResponse>> {
+        const result = await this.barangService.getItemsByTypeandName(type, name)
+        return {
+            data: result,
+        };
+    }
+    
+    @UseGuards(AccessTokenAuth)
     @Get('/getItemsByType/:type')
     async getItemsByType(@Param('type') type: string): Promise<WebResponse<ItemsResponse[]>> {
         const result = await this.barangService.getItemsByCategory(type)

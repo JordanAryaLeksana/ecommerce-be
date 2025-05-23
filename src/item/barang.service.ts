@@ -113,7 +113,7 @@ export class BarangService {
           tools: tool,
         }]
       };
-      
+
 
     } catch (err: unknown) {
       this.logger.error('Failed to add item', {
@@ -133,6 +133,7 @@ export class BarangService {
       throw new InternalServerErrorException('Unexpected error occurred while adding item');
     }
   }
+
   async getItemsById(id: string): Promise<ItemsResponse> {
     const result = await this.prismaService.item.findUnique({
       where: {
@@ -144,7 +145,6 @@ export class BarangService {
         tool: true,
       }
     })
-
 
     if (result?.stock === 0) {
       throw new NotFoundException(`Barang with id ${id} not available`);
@@ -165,6 +165,36 @@ export class BarangService {
     };
   }
 
+  async getItemsByTypeandName(type: string, name: string): Promise<ItemsResponse> {
+    const result = await this.prismaService.item.findMany({
+      where: {
+        type: type as Category,
+        name: {
+          contains: name,
+          mode: 'insensitive',
+        },
+      },
+      include: {
+        book: true,
+        final_project: true,
+        tool: true,
+      }
+    });
+    if (!result || result.length === 0) {
+      throw new NotFoundException(`Barang with type ${type} and name ${name} not found`);
+    }
+    return {
+      item: result.map((item) => {
+        const { book, final_project, tool, ...rest } = item;
+        return {
+          ...rest,
+          books: book,
+          finalproject: final_project,
+          tools: tool,
+        };
+      }),
+    }
+  };
   async DeleteItems(id: string): Promise<ItemsResponse> {
     this.logger.info(`Delete Items: ${id}`);
 
