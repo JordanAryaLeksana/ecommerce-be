@@ -1,0 +1,297 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Selamat Datang di Pramstore</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f5f5f5;
+            line-height: 1.6;
+        }
+        
+        .email-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #FF0000, #CC0000);
+            padding: 40px 30px;
+            text-align: center;
+            color: white;
+        }
+        
+        .logo {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+        }
+        
+        .tagline {
+            font-size: 14px;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+        
+        .content {
+            padding: 40px 30px;
+        }
+        
+        .welcome-message {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .welcome-title {
+            font-size: 28px;
+            color: #333;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+        
+        .welcome-subtitle {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        
+        .user-info {
+            background: linear-gradient(135deg, #FF0000, #CC0000);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+            color: white;
+        }
+        
+        .user-info h3 {
+            font-size: 20px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .info-row:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+        
+        .info-label {
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        .info-value {
+            font-size: 14px;
+            opacity: 0.95;
+        }
+        
+        .collaborator-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .features {
+            margin-bottom: 30px;
+        }
+        
+        .features h3 {
+            color: #FF0000;
+            font-size: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .feature-list {
+            list-style: none;
+        }
+        
+        .feature-item {
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+            color: #555;
+            position: relative;
+            padding-left: 25px;
+        }
+        
+        .feature-item:before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #FF0000;
+            font-weight: bold;
+            font-size: 16px;
+        }
+        
+        .feature-item:last-child {
+            border-bottom: none;
+        }
+        
+        .cta-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #FF0000, #CC0000);
+            color: white;
+            padding: 15px 30px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 16px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: transform 0.3s ease;
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-2px);
+        }
+        
+        .footer {
+            background-color: #333;
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .footer-logo {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #FF0000;
+        }
+        
+        .footer-text {
+            font-size: 14px;
+            opacity: 0.8;
+            margin-bottom: 10px;
+        }
+        
+        .social-links {
+            margin-top: 20px;
+        }
+        
+        .social-link {
+            display: inline-block;
+            margin: 0 10px;
+            color: #FF0000;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        
+        @media (max-width: 600px) {
+            .email-container {
+                margin: 0;
+                border-radius: 0;
+            }
+            
+            .header, .content, .footer {
+                padding: 20px;
+            }
+            
+            .welcome-title {
+                font-size: 24px;
+            }
+            
+            .info-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <!-- Header Section -->
+        <div class="header">
+            <div class="logo">PRAMSTORE</div>
+            <div class="tagline">Your Supreme Shopping Experience</div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="content">
+            <div class="welcome-message">
+                <h1 class="welcome-title">Selamat Datang!</h1>
+                <p class="welcome-subtitle">Terima kasih telah bergabung dengan keluarga besar Pramstore</p>
+            </div>
+            
+            <!-- User Information -->
+            <div class="user-info">
+                <h3>Informasi Akun Anda</h3>
+                <div class="info-row">
+                    <span class="info-label">Nama:</span>
+                    <span class="info-value">{{name}}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Email:</span>
+                    <span class="info-value">{{email}}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Tipe Kolaborator:</span>
+                    <span class="info-value">
+                        <span class="collaborator-badge">{{role}}</span>
+                    </span>
+                </div>
+            </div>
+            
+            <!-- Features Section -->
+            <div class="features">
+                <h3>Fitur Unggulan Pramstore</h3>
+                <ul class="feature-list">
+                    <li class="feature-item">Akses ke ribuan produk berkualitas premium</li>
+                    <li class="feature-item">Sistem kolaborasi yang mudah dan efisien</li>
+                    <li class="feature-item">Dashboard analytics yang komprehensif</li>
+                    <li class="feature-item">Support 24/7 dari tim profesional kami</li>
+                    <li class="feature-item">Integrasi dengan berbagai platform e-commerce</li>
+                </ul>
+            </div>
+            
+            <!-- Call to Action -->
+            <div class="cta-section">
+                <a href="#" class="cta-button">Mulai Berkolaborasi</a>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <div class="footer">
+            <div class="footer-logo">PRAMSTORE</div>
+            <p class="footer-text">Platform kolaborasi e-commerce terdepan di Indonesia</p>
+            <p class="footer-text">© 2024 Pramstore. All rights reserved.</p>
+            <div class="social-links">
+                <a href="#" class="social-link">Website</a>
+                <a href="#" class="social-link">Instagram</a>
+                <a href="#" class="social-link">WhatsApp</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

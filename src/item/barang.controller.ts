@@ -18,8 +18,7 @@ export class BarangController {
             data: result,
         };
     }
-    
-    @UseGuards(AccessTokenAuth)
+
     @Get('/getItems/:id')
     async getItemsById(@Param('id') id: string): Promise<WebResponse<ItemsResponse>> {
         const result = await this.barangService.getItemsById(id)
