@@ -8,7 +8,7 @@ import { LoggerService } from '@nestjs/common';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.enableCors({
-    origin: '*',
+    origin: true,
     credentials: true,               
   });
   const logger: LoggerService = app.get(WINSTON_MODULE_NEST_PROVIDER);
