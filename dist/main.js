@@ -6,7 +6,7 @@ const nest_winston_1 = require("nest-winston");
 async function bootstrap() {
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
     app.enableCors({
-        origin: '*',
+        origin: true,
         credentials: true,
     });
     const logger = app.get(nest_winston_1.WINSTON_MODULE_NEST_PROVIDER);
