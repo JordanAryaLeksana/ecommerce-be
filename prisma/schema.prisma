@@ -23,8 +23,8 @@ enum Category {
 }
 
 enum UserRole {
-  admin
-  user
+  ADMIN
+  USER
 }
 
 enum CollaboratorRole {
@@ -33,6 +33,7 @@ enum CollaboratorRole {
   influencer
   developer
 }
+
 model CartItem {
   id        String   @id @default(cuid())
   cart      Cart     @relation(fields: [cartId], references: [id])
@@ -42,63 +43,60 @@ model CartItem {
   quantity  Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  @@unique([cartId, itemId]) 
+
+  @@unique([cartId, itemId])
 }
 
-
 model Cart {
-  id        String      @id @default(cuid())
-  userId    String      @unique
-  quantity Int         @default(0)
-  user      User        @relation(fields: [userId], references: [id])
-  cartItems CartItem[]   
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
+  id        String     @id @default(cuid())
+  userId    String     @unique
+  quantity  Int        @default(0)
+  user      User       @relation(fields: [userId], references: [id])
+  cartItems CartItem[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
 }
 
 model Item {
-  id          String      @id @default(cuid())
-  name        String      @db.VarChar(100)
+  id          String     @id @default(cuid())
+  name        String     @db.VarChar(100)
   image       String
   description String
   cartItems   CartItem[]
   price       Float
   stock       Int
   type        Category
-  rating      Int         @default(0)
-  isHot       Boolean     @default(false)
-  isNew       Boolean     @default(false)
-  isFeatured  Boolean     @default(false)
-  isOnSale    Boolean     @default(false)
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
+  rating      Int        @default(0)
+  isHot       Boolean    @default(false)
+  isNew       Boolean    @default(false)
+  isFeatured  Boolean    @default(false)
+  isOnSale    Boolean    @default(false)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
   userId      String?
-  user        User?       @relation("UserItems", fields: [userId], references: [id])
+  user        User?      @relation("UserItems", fields: [userId], references: [id])
 }
 
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  name      String   @db.VarChar(100)
-  password  String
-  role      UserRole @default(user)
-  image     String?
-  AccessToken String?
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String   @db.VarChar(100)
+  password     String
+  role         UserRole @default(USER)
+  image        String?
+  AccessToken  String?
   RefreshToken String?
-  cart      Cart?    
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  items     Item[]   @relation("UserItems")
+  cart         Cart?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  items        Item[]   @relation("UserItems")
 }
 
-
-
-
 model Collaborator {
-  id       String   @id @default(cuid())
-  name     String   @db.VarChar(100)
-  email    String   @unique
+  id        String           @id @default(cuid())
+  name      String           @db.VarChar(100)
+  email     String           @unique
   role      CollaboratorRole
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
 }

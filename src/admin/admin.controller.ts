@@ -9,15 +9,14 @@ import { UserResponse, RegisterUserRequest, UserRole } from 'src/model/user.mode
 import { BarangService } from 'src/item/barang.service';
 import { CartService } from 'src/cart/cart.service';
 import { ItemsRequest, ItemsResponse } from 'src/model/barang.model';
-@Controller('admin')
+@Controller('api/admin')
 export class AdminController {
     constructor(
         private readonly adminService: AdminService,
         private readonly itemsService: BarangService,
         private readonly cartService: CartService
     ) { }
-
-    @UseGuards(AccessTokenAuth, RolesGuards)
+    
     @Roles(UserRole.ADMIN)
     @Post('/register-admin')
     async registerAdmin(@Body() request: RegisterUserRequest): Promise<UserResponse> {

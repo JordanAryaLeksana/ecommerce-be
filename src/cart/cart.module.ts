@@ -10,6 +10,7 @@ import { CartValidation } from './cart.validation';
     CommonModule,
   ],
   controllers: [CartController],
-  providers: [CartService, CartValidation]
+  providers: [CartService, CartValidation],
+  exports: [CartService, CartValidation]
 })
 export class CartModule {}

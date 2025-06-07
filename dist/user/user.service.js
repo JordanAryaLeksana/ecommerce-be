@@ -22,6 +22,7 @@ const validation_service_1 = require("../common/validation.service");
 const bcrypt = require("bcrypt");
 const jwt_1 = require("@nestjs/jwt");
 const config_1 = require("@nestjs/config");
+const user_model_1 = require("../model/user.model");
 let UserService = class UserService {
     validationService;
     jwtService;
@@ -61,6 +62,9 @@ let UserService = class UserService {
             const user = await this.prismaService.user.create({
                 data: registerRequest
             });
+            if (user.role !== 'user') {
+                throw new common_1.HttpException("Only user can register", 403);
+            }
             return {
                 name: user.name,
                 email: user.email,
@@ -76,7 +80,8 @@ let UserService = class UserService {
             this.jwtService.signAsync({
                 id: id,
                 name: name,
-                email: email
+                email: email,
+                role: user_model_1.UserRole.USER
             }, {
                 secret: process.env.JWT_ACCESS_TOKEN_SECRET,
                 expiresIn: process.env.JWT_EXPIRES,
@@ -158,6 +163,7 @@ let UserService = class UserService {
                 id: user.id,
                 name: user.name,
                 email: user.email,
+                role: user_model_1.UserRole.USER,
                 token: token
             }
         };
@@ -168,6 +174,7 @@ let UserService = class UserService {
             id: user.id,
             name: user.name,
             email: user.email,
+            role: user_model_1.UserRole.USER
         };
     }
     async logout(user) {
@@ -182,6 +189,7 @@ let UserService = class UserService {
             data: {
                 name: user.name,
                 email: user.email,
+                role: user_model_1.UserRole.USER,
                 token: {
                     accessToken: null,
                     refreshToken: null

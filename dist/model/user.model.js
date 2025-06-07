@@ -1,7 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.LoginRequest = exports.Tokens = exports.UserResponse = exports.RegisterUserRequest = void 0;
+exports.LoginRequest = exports.Tokens = exports.UserResponse = exports.RegisterUserRequest = exports.UserRole = void 0;
+var UserRole;
+(function (UserRole) {
+    UserRole["ADMIN"] = "admin";
+    UserRole["USER"] = "user";
+})(UserRole || (exports.UserRole = UserRole = {}));
 class RegisterUserRequest {
+    role;
     password;
     name;
     email;
@@ -12,6 +18,7 @@ class UserResponse {
     name;
     token;
     email;
+    role;
 }
 exports.UserResponse = UserResponse;
 class Tokens {

@@ -14,6 +14,7 @@ export declare class RefreshToken extends RefreshToken_base {
         name: string;
         token?: import("../model/user.model").Tokens;
         email: string;
+        role?: import("../model/user.model").UserRole;
     };
 }
 export {};

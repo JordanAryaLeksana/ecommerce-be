@@ -21,7 +21,8 @@ exports.BarangModule = BarangModule = __decorate([
             common_module_1.CommonModule,
         ],
         controllers: [barang_controller_1.BarangController],
-        providers: [barang_service_1.BarangService, barang_validation_1.ItemsValidation]
+        providers: [barang_service_1.BarangService, barang_validation_1.ItemsValidation],
+        exports: [barang_service_1.BarangService, barang_validation_1.ItemsValidation]
     })
 ], BarangModule);
 //# sourceMappingURL=barang.module.js.map

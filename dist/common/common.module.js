@@ -15,6 +15,9 @@ const prisma_service_1 = require("./prisma.service");
 const validation_service_1 = require("./validation.service");
 const error_filter_1 = require("./error.filter");
 const auth_middleware_1 = require("./auth.middleware");
+const jwt_1 = require("@nestjs/jwt");
+const access_token_1 = require("./access.token");
+const refresh_token_1 = require("./refresh.token");
 let CommonModule = class CommonModule {
     configure(consumer) {
         consumer.apply(auth_middleware_1.AuthMiddleware).forRoutes('/api/*');
@@ -33,15 +36,21 @@ exports.CommonModule = CommonModule = __decorate([
             }),
             config_1.ConfigModule.forRoot({
                 isGlobal: true,
-            })
+            }),
+            jwt_1.JwtModule.register({
+                secret: process.env.JWT_SECRET,
+                signOptions: { expiresIn: process.env.JWT_EXPIRATION_TIME || '1h' },
+            }),
         ],
         providers: [prisma_service_1.PrismaService, validation_service_1.ValidationService,
             {
                 provide: 'APP_FILTER',
                 useClass: error_filter_1.ErrorFilter
-            }
+            },
+            access_token_1.AccessToken,
+            refresh_token_1.RefreshToken
         ],
-        exports: [prisma_service_1.PrismaService, validation_service_1.ValidationService]
+        exports: [prisma_service_1.PrismaService, access_token_1.AccessToken, refresh_token_1.RefreshToken, validation_service_1.ValidationService, jwt_1.JwtModule],
     })
 ], CommonModule);
 //# sourceMappingURL=common.module.js.map

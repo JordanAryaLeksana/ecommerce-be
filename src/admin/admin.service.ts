@@ -21,7 +21,6 @@ export class AdminService {
 
     async adminRegister(request: RegisterUserRequest): Promise<UserResponse> {
         this.logger.info(`Register New User: ${JSON.stringify(request)}`);
-
         const registerRequest: RegisterUserRequest = this.validationService.validate<RegisterUserRequest>(UserValidation.REGISTER, request)
         console.log(registerRequest)
         const totalUserWithSameUsername = await this.prismaService.user.count({
@@ -49,11 +48,6 @@ export class AdminService {
             const user = await this.prismaService.user.create({
                 data: registerRequest
             })
-
-            if (user.role !== 'admin') {
-                throw new HttpException("Only admin can register", 403);
-            }
-
             return {
                 // id: user.id,
                 name: user.name,

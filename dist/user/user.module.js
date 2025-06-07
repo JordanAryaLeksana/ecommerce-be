@@ -10,11 +10,10 @@ exports.UserModule = void 0;
 const common_1 = require("@nestjs/common");
 const user_controller_1 = require("./user.controller");
 const user_service_1 = require("./user.service");
-const access_token_1 = require("../common/access.token");
-const refresh_token_1 = require("../common/refresh.token");
-const jwt_1 = require("@nestjs/jwt");
 const config_1 = require("@nestjs/config");
 const common_module_1 = require("../common/common.module");
+const admin_module_1 = require("../admin/admin.module");
+const admin_service_1 = require("../admin/admin.service");
 let UserModule = class UserModule {
 };
 exports.UserModule = UserModule;
@@ -23,13 +22,10 @@ exports.UserModule = UserModule = __decorate([
         imports: [
             common_module_1.CommonModule,
             config_1.ConfigModule,
-            jwt_1.JwtModule.register({
-                secret: process.env.JWT_SECRET,
-                signOptions: { expiresIn: process.env.JWT_EXPIRATION_TIME || '1h' },
-            }),
+            admin_module_1.AdminModule
         ],
         controllers: [user_controller_1.UserController],
-        providers: [user_service_1.UserService, access_token_1.AccessToken, refresh_token_1.RefreshToken]
+        providers: [user_service_1.UserService, admin_service_1.AdminService]
     })
 ], UserModule);
 //# sourceMappingURL=user.module.js.map

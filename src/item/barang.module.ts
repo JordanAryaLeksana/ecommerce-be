@@ -10,6 +10,7 @@ import { CommonModule } from 'src/common/common.module';
     
   ],
   controllers: [BarangController],
-  providers: [BarangService, ItemsValidation]
+  providers: [BarangService, ItemsValidation],
+  exports: [BarangService, ItemsValidation]
 })
 export class BarangModule {}
