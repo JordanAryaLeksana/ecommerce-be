@@ -5,7 +5,7 @@ import { LoginRequest, RegisterUserRequest, Tokens, UserResponse } from '../mode
 import { Logger } from 'winston';
 import { UserValidation } from './user.validation';
 import { ValidationService } from '../common/validation.service';
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 import { WebResponse } from 'src/model/web.model';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';

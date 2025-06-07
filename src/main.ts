@@ -9,10 +9,11 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.enableCors({
     origin: true,
-    credentials: true,               
+    credentials: true,
   });
   const logger: LoggerService = app.get(WINSTON_MODULE_NEST_PROVIDER);
   app.useLogger(logger);
-  await app.listen(8000);
+  await app.listen(8000); 
 }
 bootstrap();
+

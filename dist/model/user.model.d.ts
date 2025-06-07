@@ -1,6 +1,6 @@
 export declare enum UserRole {
-    ADMIN = "admin",
-    USER = "user"
+    ADMIN = "ADMIN",
+    USER = "USER"
 }
 export declare class RegisterUserRequest {
     role: UserRole;

@@ -19,7 +19,7 @@ const prisma_service_1 = require("../common/prisma.service");
 const winston_1 = require("winston");
 const user_validation_1 = require("./user.validation");
 const validation_service_1 = require("../common/validation.service");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 const jwt_1 = require("@nestjs/jwt");
 const config_1 = require("@nestjs/config");
 const user_model_1 = require("../model/user.model");
@@ -62,7 +62,7 @@ let UserService = class UserService {
             const user = await this.prismaService.user.create({
                 data: registerRequest
             });
-            if (user.role !== 'user') {
+            if (user.role !== 'USER') {
                 throw new common_1.HttpException("Only user can register", 403);
             }
             return {

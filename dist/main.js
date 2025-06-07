@@ -11,7 +11,7 @@ async function bootstrap() {
     });
     const logger = app.get(nest_winston_1.WINSTON_MODULE_NEST_PROVIDER);
     app.useLogger(logger);
-    await app.listen(8000);
+    await app.listen(8000, '0.0.0.0');
 }
 bootstrap();
 //# sourceMappingURL=main.js.map

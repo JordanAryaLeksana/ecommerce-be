@@ -3,8 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.LoginRequest = exports.Tokens = exports.UserResponse = exports.RegisterUserRequest = exports.UserRole = void 0;
 var UserRole;
 (function (UserRole) {
-    UserRole["ADMIN"] = "admin";
-    UserRole["USER"] = "user";
+    UserRole["ADMIN"] = "ADMIN";
+    UserRole["USER"] = "USER";
 })(UserRole || (exports.UserRole = UserRole = {}));
 class RegisterUserRequest {
     role;

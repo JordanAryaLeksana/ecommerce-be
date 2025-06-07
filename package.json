@@ -17,9 +17,7 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "vercel-build" : "nest build",
     "postinstall": "prisma generate"
-
   },
   "dependencies": {
     "@nestjs-modules/mailer": "^1.6.1",
@@ -30,7 +28,7 @@
     "@nestjs/passport": "^11.0.5",
     "@nestjs/platform-express": "^11.0.1",
     "@prisma/client": "^6.8.2",
-    "bcrypt": "^5.1.1",
+    "bcryptjs": "^3.0.2",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
     "jsonwebtoken": "^9.0.2",
