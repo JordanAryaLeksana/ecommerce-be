@@ -49,7 +49,7 @@ export class UserService {
             const user = await this.prismaService.user.create({
                 data: registerRequest
             })
-            if (user.role !== 'user') {
+            if (user.role !== 'USER') {
                 throw new HttpException("Only user can register", 403);
             }
 

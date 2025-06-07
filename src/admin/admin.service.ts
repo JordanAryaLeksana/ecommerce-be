@@ -153,7 +153,7 @@ export class AdminService {
             throw new HttpException("Refresh token is missing", 500);
         }
         await this.updateRefreshToken(user.id, token.refreshToken)
-        if (user.role !== 'admin') {
+        if (user.role !== 'ADMIN') {
             throw new HttpException("Only admin can login", 403);
         }
         await this.prismaService.user.update({
@@ -180,7 +180,7 @@ export class AdminService {
         await this.prismaService.user.update({
             where: {
                 id: user.id,
-                role: UserRole.ADMIN
+                role:"ADMIN"
             },
             data: {
                 RefreshToken: null,
@@ -205,7 +205,7 @@ export class AdminService {
     async getAllAdmins(): Promise<UserResponse[]> {
         const admins = await this.prismaService.user.findMany({
             where: {
-                role: UserRole.ADMIN
+                role: "ADMIN"
             }
         });
 
@@ -220,7 +220,7 @@ export class AdminService {
     async getAllUsers(): Promise<UserResponse[]> {
         const users = await this.prismaService.user.findMany({
             where: {
-                role: UserRole.USER
+                role: "USER"
             }
         })
         return users.map(user => ({
