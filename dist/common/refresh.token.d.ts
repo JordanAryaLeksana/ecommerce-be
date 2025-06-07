@@ -10,6 +10,7 @@ export declare class RefreshToken extends RefreshToken_base {
     constructor(configService: ConfigService);
     validate(req: Request, payload: UserResponse): {
         refreshToken: string | undefined;
+        id?: string;
         name: string;
         token?: import("../model/user.model").Tokens;
         email: string;

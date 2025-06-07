@@ -1,33 +1,44 @@
 import { z, ZodType } from "zod";
 
-const baseSchema = z.object({
-  type: z.enum(['books', 'projects', 'tools']),
-  name: z.string().min(1).max(100),
-  price: z.number().min(0),
-  stock: z.number().min(0),
-  description: z.string().min(1).max(1000),
-  image: z.string().url(),
-  writer: z.string().min(1).max(100).optional(),
-});
+
+enum Category {
+  Tshirt = "Tshirt",
+  Hoodies = "Hoodies",
+  Streetwear = "Streetwear",
+  Luxury = "Luxury",
+  Jackets = "Jackets",
+  Sweatshirts = "Sweatshirts",
+}
 
 export class ItemsValidation {
-  static readonly CREATE: ZodType = baseSchema.superRefine((data, ctx) => {
-    if (data.type === 'books' && !data.writer) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'Writer is required when type is books',
-        path: ['writer'],
-      });
-    }
-  });
+  static readonly CREATE: ZodType = z.object({
+    name: z.string().min(1, "Name is required"),
+    image: z.string().url("Image must be a valid URL"),
+    description: z.string().min(1, "Description is required"),
+    rating: z.number().min(0, "Rating must be at least 0").max(5, "Rating must be at most 5").optional(),
+    isHot: z.boolean().optional(),
+    isNew: z.boolean().optional(),
+    isFeatured: z.boolean().optional(),
+    price: z.number().min(0, "Price must be at least 0").optional(),
+    stock: z.number().min(0, "Stock must be at least 0").optional(),
+    type: z.nativeEnum(Category, {
+      errorMap: () => ({ message: "Invalid category type" }),
+    }),
+  })
 
   static readonly UPDATE: ZodType = z.object({
-    type: z.enum(['books', 'projects', 'tools']).optional(),
-    name: z.string().min(1).max(100).optional(),
-    price: z.number().min(0).optional(),
-    stock: z.number().min(0).optional(),
-    description: z.string().min(1).max(1000).optional(),
-    image: z.string().url().optional(),
-    writer: z.string().min(1).max(100).optional(),
-  });
+    id: z.string().uuid("Invalid ID format"),
+    name: z.string().min(1, "Name is required").optional(),
+    image: z.string().url("Image must be a valid URL").optional(),
+    description: z.string().min(1, "Description is required").optional(),
+    rating: z.number().min(0, "Rating must be at least 0").max(5, "Rating must be at most 5").optional(),
+    isHot: z.boolean().optional(),
+    isNew: z.boolean().optional(),
+    isFeatured: z.boolean().optional(),
+    price: z.number().min(0, "Price must be at least 0").optional(),
+    stock: z.number().min(0, "Stock must be at least 0").optional(),
+    type: z.nativeEnum(Category, {
+      errorMap: () => ({ message: "Invalid category type" }),
+    }).optional(),
+  })
 }

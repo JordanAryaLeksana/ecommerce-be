@@ -18,6 +18,7 @@ export class ErrorFilter implements ExceptionFilter {
             this.logger.error(
                 `ZodError: ${JSON.stringify(exception.errors, null, 2)}`
             );
+          
             
             response.status(400).json({
                 errors: `Validation Error: ${exception.errors.map(err => err.message).join(', ')}`

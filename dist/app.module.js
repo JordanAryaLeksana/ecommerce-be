@@ -15,6 +15,7 @@ const collaborator_controller_1 = require("./collaborator/collaborator.controlle
 const collaborator_module_1 = require("./collaborator/collaborator.module");
 const mailer_1 = require("@nestjs-modules/mailer");
 const handlebars_adapter_1 = require("@nestjs-modules/mailer/dist/adapters/handlebars.adapter");
+const cart_module_1 = require("./cart/cart.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -41,7 +42,7 @@ exports.AppModule = AppModule = __decorate([
                         strict: true,
                     },
                 }
-            }), common_module_1.CommonModule, user_module_1.UserModule, barang_module_1.BarangModule, collaborator_module_1.CollaboratorModule
+            }), common_module_1.CommonModule, user_module_1.UserModule, barang_module_1.BarangModule, collaborator_module_1.CollaboratorModule, cart_module_1.CartModule
         ],
         controllers: [collaborator_controller_1.CollaboratorController],
         providers: [],

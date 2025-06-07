@@ -81,7 +81,6 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], BarangController.prototype, "getItemsById", null);
 __decorate([
-    (0, common_1.UseGuards)(Accesstoken_auth_guard_1.AccessTokenAuth),
     (0, common_1.Get)('/getItemsbyTypeandName/:type/:name'),
     __param(0, (0, common_1.Param)('type')),
     __param(1, (0, common_1.Param)('name')),
@@ -90,7 +89,6 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], BarangController.prototype, "getItemsByTypeAndId", null);
 __decorate([
-    (0, common_1.UseGuards)(Accesstoken_auth_guard_1.AccessTokenAuth),
     (0, common_1.Get)('/getItemsByType/:type'),
     __param(0, (0, common_1.Param)('type')),
     __metadata("design:type", Function),
@@ -98,7 +96,6 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], BarangController.prototype, "getItemsByType", null);
 __decorate([
-    (0, common_1.UseGuards)(Accesstoken_auth_guard_1.AccessTokenAuth),
     (0, common_1.Get)('/getAllItems'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),

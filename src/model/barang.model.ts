@@ -4,41 +4,29 @@ export interface Items {
     type: Category;
     name: string;
     price: number;
-    stock: number;
-    description: string;
-    books: Books[];
-    finalproject: finalproject[];
+    rating: number;
     image: string;
-    tools: Tools[];    
+    isHot: boolean;
+    isNew: boolean;
+    isFeatured: boolean;
+    isOnSale: boolean;
+    stock: number;
+    description: string; 
     createdAt: Date;
     updatedAt: Date;
 }
 
 export interface ItemsRequest {
     type: string;
-    writer?: string;
-    year?: number;
     name: string;
     price: number;
     stock: number;
+    isHot?: boolean;
+    isNew?: boolean;
+    isFeatured?: boolean;
+    rating?: number;
     description: string;
     image: string;
-}
-export interface Books {
-    id        : string;
-    writer    : string;
-    year      : number;
-    barang?   : Items;
-}
-
-export interface finalproject {
-    id        : string;
-    barang?    : Items;
-}
-
-export interface Tools {
-    id        : string;
-    barang?    : Items;
 }
 
 export interface ItemsResponse {

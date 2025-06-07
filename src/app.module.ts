@@ -7,6 +7,10 @@ import { CollaboratorController } from './collaborator/collaborator.controller';
 import { CollaboratorModule } from './collaborator/collaborator.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
+import { CartModule } from './cart/cart.module';
+import { AdminService } from './admin/admin.service';
+import { AdminController } from './admin/admin.controller';
+import { AdminModule } from './admin/admin.module';
 
 @Module({
   imports: [
@@ -30,9 +34,9 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
           strict: true,
         },
       }
-    }), CommonModule, UserModule, BarangModule, CollaboratorModule],
-  controllers: [CollaboratorController],
-  providers: [],
+    }), CommonModule, UserModule, BarangModule, CollaboratorModule, CartModule, AdminModule],
+  controllers: [CollaboratorController, AdminController],
+  providers: [AdminService],
 })
 export class AppModule { }
 

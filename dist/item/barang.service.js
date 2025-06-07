@@ -41,97 +41,38 @@ let BarangService = class BarangService {
         if (!(request.type in client_1.Category)) {
             throw new common_1.BadRequestException(`Invalid category type: ${request.type}`);
         }
-        try {
-            const validated = this.validationService.validate(barang_validation_1.ItemsValidation.CREATE, request);
-            const parsedCategory = parseCategory(validated.type);
-            if (parsedCategory === client_1.Category.books && !request.writer) {
-                throw new common_1.UnprocessableEntityException('Writer is required for book items');
-            }
-            const item = await this.prismaService.item.create({
-                data: {
-                    name: validated.name,
-                    image: validated.image,
-                    description: validated.description,
-                    price: validated.price || 0,
-                    stock: validated.stock || 0,
-                    type: parseCategory(validated.type),
-                },
-            });
-            switch (validated.type) {
-                case client_1.Category.books:
-                    await this.prismaService.books.create({
-                        data: {
-                            writer: validated.writer,
-                            year: new Date().getFullYear(),
-                            barang: { connect: { id: item.id } },
-                        },
-                    });
-                    break;
-                case client_1.Category.projects:
-                    await this.prismaService.projects.create({
-                        data: {
-                            barang: { connect: { id: item.id } },
-                        },
-                    });
-                    break;
-                case client_1.Category.tools:
-                    await this.prismaService.tools.create({
-                        data: {
-                            barang: { connect: { id: item.id } },
-                        },
-                    });
-                    break;
-                default:
-                    throw new common_1.BadRequestException(`Unsupported category type`);
-            }
-            const result = await this.prismaService.item.findUnique({
-                where: { id: item.id },
-                include: {
-                    book: true,
-                    final_project: true,
-                    tool: true,
-                },
-            });
-            if (!result) {
-                throw new common_1.NotFoundException(`Barang with id ${item.id} not found`);
-            }
-            const { book, final_project, tool, ...rest } = result;
-            return {
-                item: [{
-                        ...rest,
-                        books: book,
-                        finalproject: final_project,
-                        tools: tool,
-                    }]
-            };
+        const validated = this.validationService.validate(barang_validation_1.ItemsValidation.CREATE, request);
+        const addingItem = await this.prismaService.item.create({
+            data: {
+                name: validated.name,
+                image: validated.image,
+                description: validated.description,
+                rating: validated.rating || 0,
+                isHot: validated.isHot || false,
+                isNew: validated.isNew || false,
+                isFeatured: validated.isFeatured || false,
+                price: validated.price || 0,
+                stock: validated.stock || 0,
+                type: parseCategory(validated.type),
+            },
+        });
+        if (validated.stock === 0 || validated.stock === undefined) {
+            throw new common_1.UnprocessableEntityException(`Stock must be greater than 0`);
         }
-        catch (err) {
-            this.logger.error('Failed to add item', {
-                error: err instanceof Error ? err.message : String(err)
-            });
-            if (err instanceof common_1.BadRequestException ||
-                err instanceof common_1.ConflictException ||
-                err instanceof common_1.NotFoundException ||
-                err instanceof common_1.UnprocessableEntityException) {
-                throw err;
-            }
-            if (err instanceof Error) {
-                this.logger.error(err.message);
-                throw new common_1.InternalServerErrorException(err.message);
-            }
-            throw new common_1.InternalServerErrorException('Unexpected error occurred while adding item');
+        if (!addingItem) {
+            throw new common_1.InternalServerErrorException(`Failed to add item`);
         }
+        return {
+            item: [{
+                    ...addingItem
+                }],
+        };
     }
     async getItemsById(id) {
         const result = await this.prismaService.item.findUnique({
             where: {
                 id: id,
             },
-            include: {
-                book: true,
-                final_project: true,
-                tool: true,
-            }
         });
         if (result?.stock === 0) {
             throw new common_1.NotFoundException(`Barang with id ${id} not available`);
@@ -139,14 +80,9 @@ let BarangService = class BarangService {
         if (!result) {
             throw new common_1.ConflictException(`Barang with id ${id} not found`);
         }
-        console.log(result);
-        const { book, final_project, tool, ...rest } = result;
         return {
             item: [{
-                    ...rest,
-                    books: book,
-                    finalproject: final_project,
-                    tools: tool,
+                    ...result,
                 }],
         };
     }
@@ -159,23 +95,14 @@ let BarangService = class BarangService {
                     mode: 'insensitive',
                 },
             },
-            include: {
-                book: true,
-                final_project: true,
-                tool: true,
-            }
         });
         if (!result || result.length === 0) {
             throw new common_1.NotFoundException(`Barang with type ${type} and name ${name} not found`);
         }
         return {
             item: result.map((item) => {
-                const { book, final_project, tool, ...rest } = item;
                 return {
-                    ...rest,
-                    books: book,
-                    finalproject: final_project,
-                    tools: tool,
+                    ...item
                 };
             }),
         };
@@ -187,11 +114,6 @@ let BarangService = class BarangService {
             where: {
                 id: id,
             },
-            include: {
-                book: true,
-                final_project: true,
-                tool: true,
-            }
         });
         if (!findItems) {
             throw new common_1.NotFoundException(`Barang with id ${id} not found`);
@@ -200,93 +122,45 @@ let BarangService = class BarangService {
             where: {
                 id: id,
             },
-            include: {
-                book: true,
-                final_project: true,
-                tool: true,
-            }
         });
         if (!result) {
             throw new common_1.ConflictException(`Barang with id ${id} not found`);
         }
-        const { book, final_project, tool, ...rest } = result;
         return {
             item: [{
-                    ...rest,
-                    books: book,
-                    finalproject: final_project,
-                    tools: tool,
+                    ...result
                 }],
         };
     }
     async getAllItems() {
-        const result = await this.prismaService.item.findMany({
-            include: {
-                book: true,
-                final_project: true,
-                tool: true,
-            },
-        });
+        const result = await this.prismaService.item.findMany();
         return {
             item: result.map((item) => {
-                const { book, final_project, tool, ...rest } = item;
                 return {
-                    ...rest,
-                    books: book,
-                    finalproject: final_project,
-                    tools: tool,
+                    ...item
                 };
             }),
         };
     }
     async updateItems(id, request) {
         const validated = this.validationService.validate(barang_validation_1.ItemsValidation.UPDATE, request);
-        if (validated.type === client_1.Category.books && !validated.writer) {
-            throw new common_1.UnprocessableEntityException('Writer is required for book items');
-        }
         const item = await this.prismaService.item.update({
             where: { id: id },
             data: {
                 name: validated.name,
                 image: validated.image,
+                rating: validated.rating || 0,
+                isHot: validated.isHot || false,
+                isNew: validated.isNew || false,
+                isFeatured: validated.isFeatured || false,
                 description: validated.description,
                 price: validated.price || 0,
                 stock: validated.stock || 0,
                 type: parseCategory(validated.type)
             },
         });
-        switch (validated.type) {
-            case client_1.Category.books:
-                await this.prismaService.books.update({
-                    where: { id: item.id },
-                    data: {
-                        writer: validated.writer,
-                        year: new Date().getFullYear(),
-                    },
-                });
-                break;
-            case client_1.Category.projects:
-                await this.prismaService.projects.update({
-                    where: { id: item.id },
-                    data: {},
-                });
-                break;
-            case client_1.Category.tools:
-                await this.prismaService.tools.update({
-                    where: { id: item.id },
-                    data: {},
-                });
-                break;
-            default:
-                throw new common_1.BadRequestException(`Unsupported category type`);
-        }
         const updatedItem = await this.prismaService.item.findUnique({
             where: { id: item.id },
-            include: {
-                book: true,
-                final_project: true,
-                tool: true,
-            },
         });
         if (!updatedItem) {
             throw new common_1.NotFoundException(`Barang with id ${item.id} not found`);
@@ -294,13 +168,9 @@ let BarangService = class BarangService {
         if (updatedItem.stock === 0) {
             throw new common_1.NotFoundException(`Barang with id ${id} not available`);
         }
-        const { book, final_project, tool, ...rest } = updatedItem;
         return {
             item: [{
-                    ...rest,
-                    books: book,
-                    finalproject: final_project,
-                    tools: tool,
+                    ...updatedItem,
                 }],
         };
     }
@@ -309,25 +179,34 @@ let BarangService = class BarangService {
             where: {
                 type: category,
             },
-            include: {
-                book: true,
-                final_project: true,
-                tool: true,
-            },
         });
         if (!result) {
             throw new common_1.NotFoundException(`Barang with category ${category} not found`);
         }
         return {
             item: result.map((item) => {
-                const { book, final_project, tool, ...rest } = item;
                 return {
-                    ...rest,
-                    books: book,
-                    finalproject: final_project,
-                    tools: tool,
+                    ...item
                 };
             }),
+        };
+    }
+    async cart(id) {
+        const result = await this.prismaService.item.findUnique({
+            where: {
+                id: id,
+            },
+        });
+        if (!result) {
+            throw new common_1.NotFoundException(`Barang with id ${id} not found`);
+        }
+        if (result.stock === 0) {
+            throw new common_1.NotFoundException(`Barang with id ${id} not available`);
+        }
+        return {
+            item: [{
+                    ...result,
+                }],
         };
     }
 };

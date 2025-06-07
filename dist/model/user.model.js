@@ -8,6 +8,7 @@ class RegisterUserRequest {
 }
 exports.RegisterUserRequest = RegisterUserRequest;
 class UserResponse {
+    id;
     name;
     token;
     email;

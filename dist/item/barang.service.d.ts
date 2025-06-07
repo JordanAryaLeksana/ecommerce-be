@@ -16,4 +16,5 @@ export declare class BarangService {
     getAllItems(): Promise<ItemsResponse>;
     updateItems(id: string, request: ItemsRequest): Promise<ItemsResponse>;
     getItemsByCategory(category: string): Promise<ItemsResponse>;
+    cart(id: string): Promise<ItemsResponse>;
 }

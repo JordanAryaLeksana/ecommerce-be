@@ -4,6 +4,7 @@ export declare class RegisterUserRequest {
     email: string;
 }
 export declare class UserResponse {
+    id?: string;
     name: string;
     token?: Tokens;
     email: string;

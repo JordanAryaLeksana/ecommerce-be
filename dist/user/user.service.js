@@ -127,7 +127,6 @@ let UserService = class UserService {
     }
     async login(request) {
         this.logger.info(`Login User: ${JSON.stringify(request)}`);
-        this.logger.error(`Login User: ${JSON.stringify(request)}`);
         const LoginRequest = this.validationService.validate(user_validation_1.UserValidation.LOGIN, request);
         const user = await this.prismaService.user.findUnique({
             where: {
@@ -156,6 +155,7 @@ let UserService = class UserService {
         });
         return {
             data: {
+                id: user.id,
                 name: user.name,
                 email: user.email,
                 token: token
@@ -165,6 +165,7 @@ let UserService = class UserService {
     async get(user) {
         await Promise.resolve();
         return {
+            id: user.id,
             name: user.name,
             email: user.email,
         };

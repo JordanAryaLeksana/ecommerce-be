@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
+ 
 import { Inject, Injectable } from '@nestjs/common';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { PrismaService } from 'src/common/prisma.service';
@@ -7,7 +7,7 @@ import { CollaboratorRequest, CollaboratorResponse } from 'src/model/collaborato
 import { Logger } from 'winston';
 import * as CollaboratorValidation from './collaborator.validation';
 import { MailerService } from '@nestjs-modules/mailer';
-import { Subject } from 'rxjs';
+
 
 
 
@@ -29,7 +29,7 @@ export class CollaboratorService {
             request,
         );
 
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+         
         const collaborator = await this.prismaService.collaborator.create({
             data: {
                 name: validated.name,

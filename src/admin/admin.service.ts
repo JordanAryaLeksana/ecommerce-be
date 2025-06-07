@@ -1,29 +1,27 @@
-import { HttpException, Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
-import { PrismaService } from '../common/prisma.service';
-import { LoginRequest, RegisterUserRequest, Tokens, UserResponse } from '../model/user.model';
+import { PrismaService } from 'src/common/prisma.service';
 import { Logger } from 'winston';
-import { UserValidation } from './user.validation';
-import { ValidationService } from '../common/validation.service';
 import * as bcrypt from 'bcrypt';
+import { LoginRequest, RegisterUserRequest, Tokens, UserResponse, UserRole } from 'src/model/user.model';
+import { ValidationService } from 'src/common/validation.service';
+import { UserValidation } from 'src/user/user.validation';
+import { HttpException } from '@nestjs/common/exceptions/http.exception';
 import { WebResponse } from 'src/model/web.model';
 import { JwtService } from '@nestjs/jwt';
-import { ConfigService } from '@nestjs/config';
 import { User } from '@prisma/client';
-import { UserRole } from 'src/model/user.model';
-
 @Injectable()
-export class UserService {
+export class AdminService {
     constructor(
-        private validationService: ValidationService,
-        private jwtService: JwtService,
-        private configService: ConfigService,
-        @Inject(WINSTON_MODULE_PROVIDER) private logger: Logger,
-        private prismaService: PrismaService) { }
+        private readonly validationService: ValidationService,
+        private readonly jwtService: JwtService,
+        @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
+        private readonly prismaService: PrismaService,
+    ) { }
 
-    async register(request: RegisterUserRequest): Promise<UserResponse> {
+    async adminRegister(request: RegisterUserRequest): Promise<UserResponse> {
         this.logger.info(`Register New User: ${JSON.stringify(request)}`);
-    
+
         const registerRequest: RegisterUserRequest = this.validationService.validate<RegisterUserRequest>(UserValidation.REGISTER, request)
         console.log(registerRequest)
         const totalUserWithSameUsername = await this.prismaService.user.count({
@@ -36,6 +34,7 @@ export class UserService {
         }
         const totalUserWithSameEmail = await this.prismaService.user.count({
             where: {
+                name: registerRequest.name,
                 email: registerRequest.email
             }
         });
@@ -43,20 +42,24 @@ export class UserService {
             throw new HttpException("Email already exists", 400);
         }
 
+
         const hashedPassword: string = await bcrypt.hash(registerRequest.password, 10)
         registerRequest.password = hashedPassword
         try {
             const user = await this.prismaService.user.create({
                 data: registerRequest
             })
-            if (user.role !== 'user') {
-                throw new HttpException("Only user can register", 403);
+
+            if (user.role !== 'admin') {
+                throw new HttpException("Only admin can register", 403);
             }
 
             return {
                 // id: user.id,
                 name: user.name,
                 email: user.email,
+                role: UserRole.ADMIN,
+
             };
         } catch (e) {
             this.logger.error(`Error creating user: ${e}`)
@@ -72,7 +75,7 @@ export class UserService {
                     id: id,
                     name: name,
                     email: email,
-                    role: UserRole.USER
+                    role: UserRole.ADMIN
                 },
                 {
                     secret: process.env.JWT_ACCESS_TOKEN_SECRET,
@@ -83,7 +86,8 @@ export class UserService {
                 {
                     id: id,
                     name: name,
-                    email: email
+                    email: email,
+                    role: UserRole.ADMIN
                 },
                 {
                     secret: process.env.JWT_SECRET,
@@ -133,7 +137,7 @@ export class UserService {
         return tokens;
     }
 
-    async login(request: LoginRequest): Promise<WebResponse<UserResponse>> {
+    async adminLogin(request: LoginRequest): Promise<WebResponse<UserResponse>> {
         this.logger.info(`Login User: ${JSON.stringify(request)}`)
         const LoginRequest: LoginRequest = this.validationService.validate<LoginRequest>(UserValidation.LOGIN, request)
         const user = await this.prismaService.user.findUnique({
@@ -155,7 +159,9 @@ export class UserService {
             throw new HttpException("Refresh token is missing", 500);
         }
         await this.updateRefreshToken(user.id, token.refreshToken)
-
+        if (user.role !== 'admin') {
+            throw new HttpException("Only admin can login", 403);
+        }
         await this.prismaService.user.update({
             where: {
                 email: LoginRequest.email
@@ -169,25 +175,19 @@ export class UserService {
                 id: user.id,
                 name: user.name,
                 email: user.email,
-                role: UserRole.USER,
+                role: UserRole.ADMIN,
                 token: token
             }
         }
 
     }
-    async get(user: User): Promise<UserResponse> {
-        await Promise.resolve()
-        return {
-            id: user.id,
-            name: user.name,
-            email: user.email,
-            role: UserRole.USER
-        }
-    }
 
     async logout(user: User): Promise<WebResponse<UserResponse>> {
         await this.prismaService.user.update({
-            where: { id: user.id },
+            where: {
+                id: user.id,
+                role: UserRole.ADMIN
+            },
             data: {
                 RefreshToken: null,
                 AccessToken: null
@@ -199,7 +199,7 @@ export class UserService {
                 // id: user.id,
                 name: user.name,
                 email: user.email,
-                role: UserRole.USER,
+                role: UserRole.ADMIN,
                 token: {
                     accessToken: null,
                     refreshToken: null
@@ -208,4 +208,33 @@ export class UserService {
         };
     }
 
+    async getAllAdmins(): Promise<UserResponse[]> {
+        const admins = await this.prismaService.user.findMany({
+            where: {
+                role: UserRole.ADMIN
+            }
+        });
+
+        return admins.map(admin => ({
+            id: admin.id,
+            name: admin.name,
+            email: admin.email,
+            role: UserRole.ADMIN,
+        }));
+    }
+
+    async getAllUsers(): Promise<UserResponse[]> {
+        const users = await this.prismaService.user.findMany({
+            where: {
+                role: UserRole.USER
+            }
+        })
+        return users.map(user => ({
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            role: UserRole.USER,
+        }));
+    }
+    
 }
