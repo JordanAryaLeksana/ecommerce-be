@@ -148,6 +148,10 @@ export class BarangService {
 
   async getAllItems(): Promise<ItemsResponse> {
     const result = await this.prismaService.item.findMany();
+    console.log(result);
+    if(!result || result.length === 0) {
+      throw new NotFoundException(`No items found`);
+    }
     return {
       item: result.map((item) => {
         return {
@@ -204,7 +208,7 @@ export class BarangService {
         type: category as Category,
       },
     });
-
+    console.log(result);
     if (!result) {
       throw new NotFoundException(`Barang with category ${category} not found`);
     }

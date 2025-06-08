@@ -49,6 +49,7 @@ export class BarangController {
     @Get('/getAllItems')
     async getAllItems(): Promise<WebResponse<ItemsResponse[]>> {
         const result = await this.barangService.getAllItems()
+        console.log("result", result)
         return {
             data: Array.isArray(result) ? result : [result],
         };
