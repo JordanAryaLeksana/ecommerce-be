@@ -6,6 +6,7 @@ import { AccessTokenAuth } from 'src/common/Accesstoken.auth.guard';
 import { RolesGuards } from 'src/common/Roles.guard';
 import { Roles } from 'src/common/Roles.decorator';
 import { UserRole } from 'src/model/user.model';
+import { Category } from '@prisma/client';
 
 
 @Controller('/api/items')
@@ -36,8 +37,8 @@ export class BarangController {
     @UseGuards(AccessTokenAuth, RolesGuards)
     @Roles(UserRole.USER, UserRole.ADMIN)
     @Get('/getItemsByType/:type')
-    async getItemsByType(@Param('type') type: string): Promise<WebResponse<ItemsResponse[]>> {
-        const result = await this.barangService.getItemsByCategory(type)
+    async getItemsByType(@Param('type') type: Category): Promise<WebResponse<ItemsResponse[]>> {
+        const result = await this.barangService.getItemsByCategory(type);
         return {
             data: Array.isArray(result) ? result : [result],
         };

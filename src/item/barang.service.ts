@@ -202,20 +202,20 @@ export class BarangService {
     };
   }
 
-  async getItemsByCategory(category: string): Promise<ItemsResponse> {
+  async getItemsByCategory(category: Category): Promise<ItemsResponse> {
     const result = await this.prismaService.item.findMany({
       where: {
-        type: category as Category,
+        type: category,
       },
     });
+    console.log(category)
     console.log(result);
     if (!result) {
       throw new NotFoundException(`Barang with category ${category} not found`);
     }
-
+ 
     return {
       item: result.map((item) => {
-
         return {
           ...item
         };

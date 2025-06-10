@@ -69,12 +69,12 @@ export class CartService {
 
         if (existingCartItem) {
             await this.prismaService.cartItem.update({
-                where: { 
-                    cartId_itemId:{
+                where: {
+                    cartId_itemId: {
                         cartId: cart.id,
                         itemId: validated.itemId,
                     }
-                 },
+                },
                 data: {
                     quantity: existingCartItem.quantity + validated.quantity,
                 },
@@ -139,6 +139,7 @@ export class CartService {
             stock: cartItem.item.stock,
             type: cartItem.item.type,
             isOnSale: cartItem.item.isOnSale,
+            userId: validated.userId,
         }));
 
         return {
@@ -303,5 +304,238 @@ export class CartService {
         };
     }
 
-    
+    async clearCart(userId: string): Promise<CartItemsResponse> {
+        this.logger.info(`Clear Cart for UserId: ${userId}`);
+
+        const cart = await this.prismaService.cart.findFirst({
+            where: { userId },
+            include: {
+                cartItems: {
+                    include: {
+                        item: true,
+                    },
+                },
+            },
+        });
+
+        if (!cart) {
+            this.logger.error(`Cart not found for userId: ${userId}`);
+            throw new HttpException(`Cart not found for userId: ${userId}`, 404);
+        }
+        for (const cartItem of cart.cartItems) {
+            await this.prismaService.item.update({
+                where: { id: cartItem.item.id },
+                data: {
+                    stock: {
+                        increment: cartItem.quantity,
+                    },
+                },
+            });
+        }
+        await this.prismaService.cartItem.deleteMany({
+            where: {
+                cartId: cart.id,
+            },
+        });
+        return {
+            userId: cart.userId,
+            items: [],
+            totalPrice: 0,
+            cartId: cart.id,
+        };
+    }
+
+    async quantityIncrement(userId: string, itemId: string): Promise<CartItemsResponse> {
+        this.logger.info(`Increment quantity for Item: userId=${userId}, itemId=${itemId}`);
+        const cart = await this.prismaService.cart.findUnique({
+            where: { userId },
+        })
+
+        if (!cart) {
+            this.logger.error(`Cart not found for userId: ${userId}`);
+            throw new HttpException(`Cart not found for userId: ${userId}`, 404);
+        }
+        const cartItem = await this.prismaService.cartItem.findUnique({
+            where: {
+                cartId_itemId: {
+                    cartId: cart.id,
+                    itemId: itemId,
+                },
+            },
+            include: {
+                item: true,
+            },
+        });
+
+        if (!cartItem) {
+            this.logger.error(`Cart item not found for userId=${userId}, itemId=${itemId}`);
+            throw new HttpException(`Cart item not found for userId=${userId}, itemId=${itemId}`, 404);
+        }
+
+        if (cartItem.item.stock <= cartItem.quantity) {
+            this.logger.error(`Insufficient stock for item: ${itemId}`);
+            throw new HttpException(`Insufficient stock for item: ${itemId}`, 400);
+        }
+
+        const updatedCartItem = await this.prismaService.cartItem.update({
+            where: {
+                id: cartItem.id,
+            },
+            data: {
+                quantity: cartItem.quantity + 1,
+            },
+            include: {
+                item: true,
+            },
+        });
+
+        await this.prismaService.item.update({
+            where: { id: itemId },
+            data: {
+                stock: updatedCartItem.item.stock - 1,
+            },
+        });
+        
+        const updatedCart = await this.prismaService.cart.findUnique({
+            where: { id: cart.id },
+            include: {
+                cartItems: {
+                    include: {
+                        item: true,
+                    },
+                },
+            },
+        }) as {
+            id: string;
+            cartItems: Array<{
+                id: string;
+                quantity: number;
+                item: {
+                    id: string;
+                    name: string;
+                    price: number;
+                    image: string;
+                    stock: number;
+                    type: Category;
+                    isOnSale: boolean;
+                };
+            }>;
+        } | null;
+        if (!updatedCart) {
+            this.logger.error(`Cart not found after update for userId=${userId}`);
+            throw new HttpException(`Cart not found after update for userId=${userId}`, 404);
+        }
+        const items: CartItemDto[] = updatedCart.cartItems.map(cartItem => ({
+            itemId: cartItem.item.id,
+            name: cartItem.item.name,
+            price: cartItem.item.price,
+            image: cartItem.item.image,
+            quantity: cartItem.quantity,
+            totalPrice: cartItem.quantity * cartItem.item.price,
+            stock: cartItem.item.stock,
+            type: cartItem.item.type,
+            isOnSale: cartItem.item.isOnSale,
+        }));
+        return {
+            userId,
+            items,
+            totalPrice: items.reduce((total, item) => total + item.totalPrice, 0),
+            cartId: updatedCart.id,
+        };
+    }
+    async quantityDecrement(userId: string, itemId: string): Promise<CartItemsResponse> {
+        this.logger.info(`Increment quantity for Item: userId=${userId}, itemId=${itemId}`);
+        const cart = await this.prismaService.cart.findUnique({
+            where: { userId },
+        })
+
+        if (!cart) {
+            this.logger.error(`Cart not found for userId: ${userId}`);
+            throw new HttpException(`Cart not found for userId: ${userId}`, 404);
+        }
+        const cartItem = await this.prismaService.cartItem.findUnique({
+            where: {
+                cartId_itemId: {
+                    cartId: cart.id,
+                    itemId: itemId,
+                },
+            },
+            include: {
+                item: true,
+            },
+        });
+
+        if (!cartItem) {
+            this.logger.error(`Cart item not found for userId=${userId}, itemId=${itemId}`);
+            throw new HttpException(`Cart item not found for userId=${userId}, itemId=${itemId}`, 404);
+        }
+
+     
+
+        const updatedCartItem = await this.prismaService.cartItem.update({
+            where: {
+                id: cartItem.id,
+            },
+            data: {
+                quantity: cartItem.quantity - 1,
+            },
+            include: {
+                item: true,
+            },
+        });
+
+        await this.prismaService.item.update({
+            where: { id: itemId },
+            data: {
+                stock: updatedCartItem.item.stock + 1,
+            },
+        });
+        
+        const updatedCart = await this.prismaService.cart.findUnique({
+            where: { id: cart.id },
+            include: {
+                cartItems: {
+                    include: {
+                        item: true,
+                    },
+                },
+            },
+        }) as {
+            id: string;
+            cartItems: Array<{
+                id: string;
+                quantity: number;
+                item: {
+                    id: string;
+                    name: string;
+                    price: number;
+                    image: string;
+                    stock: number;
+                    type: Category;
+                    isOnSale: boolean;
+                };
+            }>;
+        } | null;
+        if (!updatedCart) {
+            this.logger.error(`Cart not found after update for userId=${userId}`);
+            throw new HttpException(`Cart not found after update for userId=${userId}`, 404);
+        }
+        const items: CartItemDto[] = updatedCart.cartItems.map(cartItem => ({
+            itemId: cartItem.item.id,
+            name: cartItem.item.name,
+            price: cartItem.item.price,
+            image: cartItem.item.image,
+            quantity: cartItem.quantity,
+            totalPrice: cartItem.quantity * cartItem.item.price,
+            stock: cartItem.item.stock,
+            type: cartItem.item.type,
+            isOnSale: cartItem.item.isOnSale,
+        }));
+        return {
+            userId,
+            items,
+            totalPrice: items.reduce((total, item) => total + item.totalPrice, 0),
+            cartId: updatedCart.id,
+        }
+    }
 }
