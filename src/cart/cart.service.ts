@@ -143,7 +143,6 @@ export class CartService {
         }));
 
         return {
-            userId: validated.userId,
             items,
             totalPrice: items.reduce((total, item) => total + item.totalPrice, 0),
             cartId: updatedCart.id,
@@ -196,17 +195,22 @@ export class CartService {
         }));
 
         return {
-            userId,
             items,
             totalPrice: items.reduce((total, item) => total + item.totalPrice, 0),
             cartId: cart.id,
         };
     }
 
-    async removeItemFromCart(userId: string, itemId: string): Promise<CartItemsResponse> {
-        this.logger.info(`Remove Item from Cart: userId=${userId}, itemId=${itemId}`);
-        const cart = await this.prismaService.cart.findUnique({
-            where: { userId },
+    async removeItemFromCart(itemId: string, cartId: string): Promise<CartItemsResponse> {
+        this.logger.info(`Remove Item from Cart: itemId=${cartId}`);
+        const cart = await this.prismaService.cart.findFirst({
+            where: {
+                cartItems: {
+                    some: {
+                        id: cartId,
+                    },
+                },
+            },
             include: {
                 cartItems: {
                     include: {
@@ -214,32 +218,17 @@ export class CartService {
                     },
                 },
             },
-        }) as {
-            id: string;
-            cartItems: Array<{
-                id: string;
-                quantity: number;
-                item: {
-                    id: string;
-                    name: string;
-                    price: number;
-                    image: string;
-                    stock: number;
-                    type: Category;
-                    isOnSale: boolean;
-                };
-            }>;
-        } | null;
+        }) 
 
         if (!cart) {
-            this.logger.error(`Cart not found for userId: ${userId}`);
-            throw new HttpException(`Cart not found for userId: ${userId}`, 404);
+            this.logger.error(`Cart not found for userId: ${itemId}`);
+            throw new HttpException(`Cart not found for itemId: ${itemId}`, 404);
         }
 
         const cartItem = cart.cartItems.find(item => item.item.id === itemId);
         if (!cartItem) {
-            this.logger.error(`Item not found in cart for userId=${userId}, itemId=${itemId}`);
-            throw new HttpException(`Item not found in cart for userId=${userId}, itemId=${itemId}`, 404);
+            this.logger.error(`Item not found in cart for itemId=${itemId}, itemId=${itemId}`);
+            throw new HttpException(`Item not found in cart for itemId=${itemId}, itemId=${itemId}`, 404);
         }
 
         await this.prismaService.cartItem.delete({
@@ -280,8 +269,8 @@ export class CartService {
         } | null;
 
         if (!updatedCart) {
-            this.logger.error(`Cart not found after update for userId=${userId}`);
-            throw new HttpException(`Cart not found after update for userId=${userId}`, 404);
+            this.logger.error(`Cart not found after update for itemId=${itemId}`);
+            throw new HttpException(`Cart not found after update for itemId=${itemId}`, 404);
         }
 
         const items = updatedCart.cartItems.map(cartItem => ({
@@ -297,7 +286,6 @@ export class CartService {
             isOnSale: cartItem.item.isOnSale,
         }));
         return {
-            userId,
             items,
             totalPrice: items.reduce((total, item) => total + item.totalPrice, 0),
             cartId: updatedCart.id,
@@ -338,7 +326,6 @@ export class CartService {
             },
         });
         return {
-            userId: cart.userId,
             items: [],
             totalPrice: 0,
             cartId: cart.id,
@@ -437,7 +424,6 @@ export class CartService {
             isOnSale: cartItem.item.isOnSale,
         }));
         return {
-            userId,
             items,
             totalPrice: items.reduce((total, item) => total + item.totalPrice, 0),
             cartId: updatedCart.id,
@@ -532,7 +518,6 @@ export class CartService {
             isOnSale: cartItem.item.isOnSale,
         }));
         return {
-            userId,
             items,
             totalPrice: items.reduce((total, item) => total + item.totalPrice, 0),
             cartId: updatedCart.id,

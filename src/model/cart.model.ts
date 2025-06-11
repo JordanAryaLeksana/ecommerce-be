@@ -20,7 +20,6 @@ export interface CartItemsRequest {
 
 export interface CartItemsResponse {
   cartId: string;
-  userId: string;
   items: CartItemDto[];
   totalPrice: number;
 }
