@@ -1,4 +1,4 @@
-import { Controller, UseGuards, Post, Body, Get, Delete, Param } from '@nestjs/common';
+import { Controller, UseGuards, Post, Body, Get, Delete, Param, Put } from '@nestjs/common';
 import { CartService } from './cart.service';
 import { AccessTokenAuth } from 'src/common/Accesstoken.auth.guard';
 import { CartItemsRequest, CartItemsResponse } from 'src/model/cart.model';
@@ -6,6 +6,7 @@ import { WebResponse } from 'src/model/web.model';
 import { Roles } from 'src/common/Roles.decorator';
 import { RolesGuards } from 'src/common/Roles.guard';
 import { UserRole } from 'src/model/user.model';
+// import { CartItem } from '@prisma/client';
 
 
 @Controller('/api/cart')
@@ -45,27 +46,13 @@ export class CartController {
     }
 
     @UseGuards(AccessTokenAuth, RolesGuards)
-    @Get('/decreaseQuantity/:cartId/:productId')
     @Roles(UserRole.USER, UserRole.ADMIN)
-    async decreaseQuantity(
-        @Param('cartId') cartId: string,
-        @Param('productId') productId: string
-    ): Promise<WebResponse<CartItemsResponse>> {
-        const result = await this.cartService.quantityDecrement(cartId, productId);
+    @Put('/updateCart/:cardId')
+    async updateCart(@Param('cardId') cardId: string, @Body() request: CartItemsRequest, items: string): Promise<WebResponse<CartItemsResponse>> {
+        const result = await this.cartService.UpdateCartItemQuantity(cardId, items, request.quantity);
         return {
             data: result,
         };
     }
-    @UseGuards(AccessTokenAuth, RolesGuards)
-    @Get('/increaseQuantity/:cartId/:productId')
-    @Roles(UserRole.USER, UserRole.ADMIN)
-    async increaseQuantity(
-        @Param('cartId') cartId: string,
-        @Param('productId') productId: string
-    ): Promise<WebResponse<CartItemsResponse>> {
-        const result = await this.cartService.quantityIncrement(cartId, productId);
-        return {
-            data: result,
-        };
-    }
+
 }
