@@ -2,7 +2,7 @@ import { HttpException, Inject, Injectable } from '@nestjs/common';
 import { ValidationService } from 'src/common/validation.service';
 import { CartValidation } from './cart.validation';
 import { PrismaService } from 'src/common/prisma.service';
-import { CartItemDto, CartItemsRequest, CartItemsResponse } from 'src/model/cart.model';
+import { CartItemDto, CartItemsRequest, CartItemsResponse, checkoutCartRequest, checkoutCartResponse } from 'src/model/cart.model';
 import { Logger } from 'winston';
 import { Category } from '@prisma/client';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
@@ -422,5 +422,94 @@ export class CartService {
             totalPrice: totalPrice,
             cartId: updatedCart.id,
         }
+    }
+
+
+    async checkoutCart(request: checkoutCartRequest): Promise<checkoutCartResponse> {
+        this.logger.info(`Checkout Cart: ${JSON.stringify(request)}`);
+        const validated: checkoutCartRequest = this.validationService.validate<checkoutCartRequest>(
+            CartValidation.checkoutCartSchema,
+            request
+        );
+
+        const cart = await this.prismaService.cart.findUnique({
+            where: { userId: validated.userId },
+            include: {
+                cartItems: {
+                    include: {
+                        item: true,
+                    },
+                },
+            },
+        });
+
+        if (!cart) {
+            this.logger.error(`Cart not found for userId: ${validated.userId}`);
+            throw new HttpException(`Cart not found for userId: ${validated.userId}`, 404);
+        }
+        if (cart.cartItems.length === 0) {
+            this.logger.error(`Cart is empty for userId: ${validated.userId}`);
+            throw new HttpException(`Cart is empty for userId: ${validated.userId}`, 400);
+        }
+
+        const items = cart.cartItems.map(cartItem => ({
+            itemId: cartItem.item.id,
+            name: cartItem.item.name,
+            quantity: cartItem.quantity,
+            price: cartItem.item.price,
+        }));
+        const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+        if (total !== validated.total) {
+            this.logger.error(`Total price mismatch for checkout: expected ${total}, got ${validated.total}`);
+            throw new HttpException(`Total price mismatch for checkout: expected ${total}, got ${validated.total}`, 400);
+        }
+        const order = await this.prismaService.order.create({
+            data: {
+                userId: validated.userId,
+                total: validated.total,
+                status: validated.status,
+                orderItems: {
+                    create: items.map(item => ({
+                        itemId: item.itemId,
+                        name: item.name,
+                        quantity: item.quantity,
+                        price: item.price,
+                    })),
+                },
+            },
+            include: {
+                orderItems: true,
+            },
+        });
+        this.logger.info(`Order created: ${JSON.stringify(order)}`);
+        await this.prismaService.cartItem.deleteMany({
+            where: {
+                cartId: cart.id,
+            },
+        });
+        await this.prismaService.cart.update({
+            where: { id: cart.id },
+            data: {
+                cartItems: {
+                    deleteMany: {},
+                },
+            },
+        });
+        return {
+            userId: order.userId,
+            orderId: order.id,
+            items: order.orderItems.map(item => ({
+                itemId: item.itemId,
+                name: item.name,
+                quantity: item.quantity,
+                price: item.price,
+                image: '', 
+                totalPrice: item.price * item.quantity,
+            })),
+            status: order.status,
+            orderDate: order.createdAt,
+            totalPrice: order.total,
+        };
+        
     }
 }

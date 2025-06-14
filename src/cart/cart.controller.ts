@@ -1,7 +1,7 @@
 import { Controller, UseGuards, Post, Body, Get, Delete, Param, Put } from '@nestjs/common';
 import { CartService } from './cart.service';
 import { AccessTokenAuth } from 'src/common/Accesstoken.auth.guard';
-import { CartItemsRequest, CartItemsResponse } from 'src/model/cart.model';
+import { CartItemsRequest, CartItemsResponse, checkoutCartRequest, checkoutCartResponse } from 'src/model/cart.model';
 import { WebResponse } from 'src/model/web.model';
 import { Roles } from 'src/common/Roles.decorator';
 import { RolesGuards } from 'src/common/Roles.guard';
@@ -50,6 +50,16 @@ export class CartController {
     @Put('/updateCart/:cardId')
     async updateCart(@Param('cardId') cardId: string, @Body() request: CartItemsRequest, items: string): Promise<WebResponse<CartItemsResponse>> {
         const result = await this.cartService.UpdateCartItemQuantity(cardId, items, request.quantity);
+        return {
+            data: result,
+        };
+    }
+
+    @UseGuards(AccessTokenAuth, RolesGuards)
+    @Post('/checkoutCart')
+    @Roles(UserRole.USER, UserRole.ADMIN)
+    async checkoutCart(@Body() request: checkoutCartRequest): Promise<WebResponse<checkoutCartResponse>> {
+        const result = await this.cartService.checkoutCart(request);
         return {
             data: result,
         };

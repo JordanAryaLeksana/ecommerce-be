@@ -7,6 +7,13 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Status {
+  PENDING
+  PROCESSING
+  COMPLETED
+  CANCELLED
+}
+
 model CartItem {
   id        String   @id @default(cuid())
   cartId    String
@@ -19,6 +26,29 @@ model CartItem {
 
   @@unique([cartId, itemId])
 }
+
+model Order {
+  id        String       @id @default(cuid())
+  userId    String
+  total     Float
+  status    Status      @default(PENDING) 
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  user       User      @relation(fields: [userId], references: [id])
+  orderItems OrderItem[] 
+}
+model OrderItem {
+  id        String   @id @default(cuid())
+  orderId   String
+  itemId    String
+  name      String   
+  price     Float   
+  image     String?  
+  quantity  Int
+  order     Order    @relation(fields: [orderId], references: [id])
+  item      Item     @relation(fields: [itemId], references: [id]) // opsional, tapi sangat disarankan
+}
+
 
 model Cart {
   id        String     @id @default(cuid())
@@ -46,6 +76,7 @@ model Item {
   isOnSale    Boolean    @default(false)
   rating      Int        @default(0)
   userId      String?
+  orderItems  OrderItem[]
   cartItems   CartItem[]
   user        User?      @relation("UserItems", fields: [userId], references: [id])
 }
@@ -62,6 +93,7 @@ model User {
   image        String?
   role         UserRole @default(USER)
   cart         Cart?
+  orders       Order[]  
   items        Item[]   @relation("UserItems")
 }
 

@@ -27,4 +27,24 @@ export class CartValidation {
             .optional(),
         quantity: z.number().int().positive(),
     });
+    static readonly checkoutCartSchema: ZodType = z.object({
+        userId: z.string(),
+        items: z.array(
+            z.object({
+                itemId: z.string(),
+                name: z.string(),
+                quantity: z.number().int().positive(),
+                price: z.number().positive(),
+            })
+        ),
+        total: z.number().positive(),
+        status: z.nativeEnum(Category, {
+            errorMap: (issue, ctx) => {
+                if (issue.code === 'invalid_enum_value') {
+                    return { message: `Invalid status: ${ctx.data}` };
+                }
+                return { message: ctx.defaultError };
+            },
+        }),
+    });
 }

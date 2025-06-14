@@ -11,6 +11,7 @@ import { CartModule } from './cart/cart.module';
 import { AdminService } from './admin/admin.service';
 import { AdminController } from './admin/admin.controller';
 import { AdminModule } from './admin/admin.module';
+import { OrderModule } from './order/order.module';
 
 @Module({
   imports: [
@@ -34,7 +35,7 @@ import { AdminModule } from './admin/admin.module';
           strict: true,
         },
       }
-    }), CommonModule, UserModule, BarangModule, CollaboratorModule, CartModule, AdminModule],
+    }), CommonModule, UserModule, BarangModule, CollaboratorModule, CartModule, AdminModule, OrderModule],
   controllers: [CollaboratorController, AdminController],
   providers: [AdminService],
 })
