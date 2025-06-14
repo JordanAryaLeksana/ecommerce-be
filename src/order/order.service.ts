@@ -1,14 +1,15 @@
 import { HttpException, Inject, Injectable } from '@nestjs/common';
-import { PrismaClient} from '@prisma/client';
+
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { ValidationService } from 'src/common/validation.service';
 import { CreateOrderRequest, OrderResponse } from 'src/model/order.model';
 import { Logger } from 'winston';
 import { OrderValidation } from './order.validation';
+import { PrismaService } from 'src/common/prisma.service';
 @Injectable()
 export class OrderService {
     constructor(
-        private readonly PrismaService: PrismaClient,
+        private readonly PrismaService: PrismaService,
         private readonly validationService: ValidationService,
         @Inject(WINSTON_MODULE_PROVIDER) private Logger: Logger,
     ) { }
@@ -39,10 +40,10 @@ export class OrderService {
         const CalculatedTotal = validationRequest.items.reduce((sum,item) => {
             return sum + item.price * item.quantity;
         }, 0);
-        if (CalculatedTotal !== validationRequest.total) {
-            this.Logger.error(`Total price mismatch for order: expected ${CalculatedTotal}, got ${validationRequest.total}`);
+        if (CalculatedTotal !== validationRequest.totalPrice) {
+            this.Logger.error(`Total price mismatch for order: expected ${CalculatedTotal}, got ${validationRequest.totalPrice}`);
             throw new HttpException(
-                `Total price mismatch for order: expected ${CalculatedTotal}, got ${validationRequest.total}`,
+                `Total price mismatch for order: expected ${CalculatedTotal}, got ${validationRequest.totalPrice}`,
                 400
             );
         }
@@ -66,7 +67,7 @@ export class OrderService {
                         price: item.price
                     }))
                 },
-                total: validationRequest.total,
+                total: validationRequest.totalPrice,
                 status: validationRequest.status,
             },
             include: {

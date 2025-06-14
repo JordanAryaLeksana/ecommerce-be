@@ -1,5 +1,5 @@
 import { Category } from '@prisma/client';
-import { Status } from '@prisma/client';
+import { OrderStatus } from '@prisma/client';
 
 export interface CartItemDto {
   itemId: string;
@@ -36,7 +36,7 @@ export interface checkoutCartRequest {
     price: number;
   }[];
   total: number;
-  status: keyof typeof Status;
+  status: keyof typeof OrderStatus;
 }
 
 export interface checkoutCartResponse {
@@ -50,5 +50,5 @@ export interface checkoutCartResponse {
   }[];
   totalPrice: number;
   orderDate: Date;
-  status: Status;
+  status: keyof typeof OrderStatus;
 }

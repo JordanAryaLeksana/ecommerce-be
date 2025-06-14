@@ -1,6 +1,5 @@
 import {z, ZodType} from 'zod';
-
-
+import { OrderStatus } from '@prisma/client';
 export class OrderValidation {
     static createOrderSchema: ZodType = z.object({
         userId: z.string().min(1, "User ID is required"),
@@ -13,7 +12,14 @@ export class OrderValidation {
         })
         ),
         totalPrice: z.number().positive("Total price must be a positive number"),
-        orderDate: z.date(),
-        status: z.enum(["pending", "shipped", "delivered", "cancelled"])
+        orderDate: z.string(),
+        status: z.nativeEnum(OrderStatus, {
+            errorMap: (issue, ctx) => {
+                if (issue.code === 'invalid_enum_value') {
+                    return { message: `Invalid order status: ${ctx.data}` };
+                }
+                return { message: ctx.defaultError };
+            }
+        })
     });
 }

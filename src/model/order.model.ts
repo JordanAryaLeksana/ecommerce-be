@@ -1,4 +1,4 @@
-import { Status } from '@prisma/client';
+import { OrderStatus } from '@prisma/client';
 
 export interface OrderResponse {
     orderId: string;
@@ -11,7 +11,7 @@ export interface OrderResponse {
     }[];
     totalPrice: number;
     orderDate: Date;
-    status: Status;
+    status: keyof typeof OrderStatus;
 }
 
 
@@ -25,6 +25,6 @@ export interface CreateOrderRequest {
         quantity: number;
         price: number;
     }[];
-    total: number;
-    status: keyof typeof Status;
+    totalPrice: number;
+    status: keyof typeof OrderStatus;
 }
