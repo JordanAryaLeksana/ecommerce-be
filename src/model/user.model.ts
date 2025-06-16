@@ -15,6 +15,7 @@ export class UserResponse {
     name: string;
     token?: Tokens;
     email: string; 
+    image?: string | null;
     role?: UserRole;
 }
 

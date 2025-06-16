@@ -9,6 +9,7 @@ import { User } from '@prisma/client';
 import { AccessTokenAuth } from '../common/Accesstoken.auth.guard';
 import { Public } from '../common/public.decorator';
 import { Tokens } from '../model/user.model';
+
 @Controller('/api/users')
 export class UserController  {
   constructor(private userService: UserService,
@@ -72,6 +73,16 @@ export class UserController  {
     return {
       data: result
     }
+  }
+
+  @Get('/getUserById/:id')
+  @UseGuards(AccessTokenAuth)
+  @HttpCode(200)
+  async getUserById(@Auth() user: User): Promise<WebResponse<UserResponse>> {
+    const result = await this.userService.getUserById(user.id);
+    return {
+      data: result
+    };
   }
   
   
