@@ -4,8 +4,8 @@ import { UserService } from './user.service';
 
 import { ConfigModule } from '@nestjs/config';
 import { CommonModule } from '../common/common.module';
-import { AdminModule } from 'src/admin/admin.module';
-import { AdminService } from 'src/admin/admin.service';
+import { AdminModule } from '../admin/admin.module';
+import { AdminService } from '../admin/admin.service';
 
 
 

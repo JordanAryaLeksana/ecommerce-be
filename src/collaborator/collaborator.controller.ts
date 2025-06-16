@@ -1,7 +1,7 @@
 import { Controller } from '@nestjs/common';
 import { CollaboratorService } from './collaborator.service';
-import { CollaboratorRequest, CollaboratorResponse } from 'src/model/collaborator.model';
-import { WebResponse } from 'src/model/web.model';
+import { CollaboratorRequest, CollaboratorResponse } from '../model/collaborator.model';
+import { WebResponse } from '../model/web.model';
 import { Post, Body } from '@nestjs/common';
 
 

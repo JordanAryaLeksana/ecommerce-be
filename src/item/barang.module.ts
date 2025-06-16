@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { BarangController } from './barang.controller';
 import { BarangService } from './barang.service';
 import { ItemsValidation } from './barang.validation';
-import { CommonModule } from 'src/common/common.module';
+import { CommonModule } from '../common/common.module';
 
 @Module({
   imports: [

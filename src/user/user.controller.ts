@@ -2,12 +2,12 @@ import { Body, Controller, HttpCode, Post, Get, UseGuards } from '@nestjs/common
 import { UserService } from './user.service';
 import { WebResponse } from '../model/web.model';
 import { LoginRequest, RegisterUserRequest, UserResponse } from '../model/user.model';
-import { Auth } from 'src/common/auth.decorator';
+import { Auth } from '../common/auth.decorator';
 import { User } from '@prisma/client';
 // import { http } from 'winston';
 // import { request } from 'http';
 import { AccessTokenAuth } from '../common/Accesstoken.auth.guard';
-import { Public } from 'src/common/public.decorator';
+import { Public } from '../common/public.decorator';
 import { Tokens } from '../model/user.model';
 @Controller('/api/users')
 export class UserController  {

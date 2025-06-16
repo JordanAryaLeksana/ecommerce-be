@@ -1,14 +1,14 @@
 import { Body, Controller, Get, Post, Delete, Param,Put } from '@nestjs/common';
 import { AdminService } from './admin.service';
-import { AccessTokenAuth } from 'src/common/Accesstoken.auth.guard';
-import { RolesGuards } from 'src/common/Roles.guard';
-import { Roles } from 'src/common/Roles.decorator';
+import { AccessTokenAuth } from '../common/Accesstoken.auth.guard';
+import { RolesGuards } from '../common/Roles.guard';
+import { Roles } from '../common/Roles.decorator';
 import { UseGuards } from '@nestjs/common';
-import { WebResponse } from 'src/model/web.model';
-import { UserResponse, RegisterUserRequest, UserRole } from 'src/model/user.model';
-import { BarangService } from 'src/item/barang.service';
-import { CartService } from 'src/cart/cart.service';
-import { ItemsRequest, ItemsResponse } from 'src/model/barang.model';
+import { WebResponse } from '../model/web.model';
+import { UserResponse, RegisterUserRequest, UserRole } from '../model/user.model';
+import { BarangService } from '../item/barang.service';
+import { CartService } from '../cart/cart.service';
+import { ItemsRequest, ItemsResponse } from '../model/barang.model';
 @Controller('api/admin')
 export class AdminController {
     constructor(

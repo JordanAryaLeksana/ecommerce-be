@@ -1,9 +1,9 @@
  
 import { Inject, Injectable } from '@nestjs/common';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
-import { PrismaService } from 'src/common/prisma.service';
-import { ValidationService } from 'src/common/validation.service';
-import { CollaboratorRequest, CollaboratorResponse } from 'src/model/collaborator.model';
+import { PrismaService } from '../common/prisma.service';
+import { ValidationService } from '../common/validation.service';
+import { CollaboratorRequest, CollaboratorResponse } from '../model/collaborator.model';
 import { Logger } from 'winston';
 import * as CollaboratorValidation from './collaborator.validation';
 import { MailerService } from '@nestjs-modules/mailer';

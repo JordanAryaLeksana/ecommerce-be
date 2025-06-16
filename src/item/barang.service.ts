@@ -7,13 +7,13 @@ import {
   InternalServerErrorException,
   UnprocessableEntityException,
 } from '@nestjs/common';
-import { ItemsRequest, ItemsResponse } from 'src/model/barang.model';
+import { ItemsRequest, ItemsResponse } from '../model/barang.model';
 import { Category } from '@prisma/client';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { Logger } from 'winston';
 import { PrismaService } from '../common/prisma.service';
 import { ItemsValidation } from './barang.validation';
-import { ValidationService } from 'src/common/validation.service';
+import { ValidationService } from '../common/validation.service';
 
 
 

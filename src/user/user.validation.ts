@@ -1,5 +1,5 @@
 import { z, ZodType } from "zod";
-import { UserRole } from "src/model/user.model";
+import { UserRole } from "../model/user.model";
  export class UserValidation {
     static readonly REGISTER: ZodType = z.object({
         password: z.string().min(6).max(100),

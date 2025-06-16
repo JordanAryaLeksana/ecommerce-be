@@ -10,7 +10,7 @@ import { WebResponse } from 'src/model/web.model';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { User } from '@prisma/client';
-import { UserRole } from 'src/model/user.model';
+import { UserRole } from '../model/user.model';
 
 @Injectable()
 export class UserService {

@@ -1,13 +1,13 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
-import { PrismaService } from 'src/common/prisma.service';
+import { PrismaService } from '../common/prisma.service';
 import { Logger } from 'winston';
 import * as bcrypt from 'bcryptjs';
-import { LoginRequest, RegisterUserRequest, Tokens, UserResponse, UserRole } from 'src/model/user.model';
-import { ValidationService } from 'src/common/validation.service';
-import { UserValidation } from 'src/user/user.validation';
+import { LoginRequest, RegisterUserRequest, Tokens, UserResponse, UserRole } from '../model/user.model';
+import { ValidationService } from '../common/validation.service';
+import { UserValidation } from '../user/user.validation';
 import { HttpException } from '@nestjs/common/exceptions/http.exception';
-import { WebResponse } from 'src/model/web.model';
+import { WebResponse } from '../model/web.model';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '@prisma/client';
 @Injectable()

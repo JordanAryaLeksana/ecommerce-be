@@ -1,8 +1,8 @@
 import { HttpException, Inject, Injectable } from '@nestjs/common';
-import { ValidationService } from 'src/common/validation.service';
+import { ValidationService } from '../common/validation.service';
 import { CartValidation } from './cart.validation';
-import { PrismaService } from 'src/common/prisma.service';
-import { CartItemDto, CartItemsRequest, CartItemsResponse, checkoutCartRequest, checkoutCartResponse } from 'src/model/cart.model';
+import { PrismaService } from '../common/prisma.service';
+import { CartItemDto, CartItemsRequest, CartItemsResponse, checkoutCartRequest, checkoutCartResponse } from '../model/cart.model';
 import { Logger } from 'winston';
 import { Category } from '@prisma/client';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';

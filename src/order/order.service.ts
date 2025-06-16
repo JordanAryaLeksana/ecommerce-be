@@ -1,11 +1,11 @@
 import { HttpException, Inject, Injectable } from '@nestjs/common';
 
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
-import { ValidationService } from 'src/common/validation.service';
-import { CreateOrderRequest, OrderResponse } from 'src/model/order.model';
+import { ValidationService } from '../common/validation.service';
+import { CreateOrderRequest, OrderResponse } from '../model/order.model';
 import { Logger } from 'winston';
 import { OrderValidation } from './order.validation';
-import { PrismaService } from 'src/common/prisma.service';
+import { PrismaService } from '../common/prisma.service';
 @Injectable()
 export class OrderService {
     constructor(
