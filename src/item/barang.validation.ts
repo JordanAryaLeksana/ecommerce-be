@@ -27,7 +27,7 @@ export class ItemsValidation {
   })
 
   static readonly UPDATE: ZodType = z.object({
-    id: z.string().uuid("Invalid ID format"),
+    id: z.string(),
     name: z.string().min(1, "Name is required").optional(),
     image: z.string().url("Image must be a valid URL").optional(),
     description: z.string().min(1, "Description is required").optional(),

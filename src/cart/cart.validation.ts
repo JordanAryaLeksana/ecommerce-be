@@ -23,7 +23,7 @@ export class CartValidation {
         isOnSale: z.boolean().optional(),
         totalPrice: z.number().positive().optional(),
         cartId: z
-            .union([z.string().uuid(), z.literal('')])
+            .union([z.string(), z.literal('')])
             .optional(),
         quantity: z.number().int().positive(),
     });
